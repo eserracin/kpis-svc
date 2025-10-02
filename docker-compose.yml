@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: kpis-postgres
+    environment:
+      POSTGRES_DB: kpis-svc
+      POSTGRES_USER: svc_kpis_user
+      POSTGRES_PASSWORD: svc_kpis_user
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - kpis-network
+
+  # KPIs Service (Backend)
+  kpis-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: kpis-service
+    ports:
+      - "8002:8002"
+    environment:
+      # Database
+      POSTGRES_SERVER: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: svc_kpis_user
+      POSTGRES_PASSWORD: svc_kpis_user
+      POSTGRES_DB: kpis-svc
+      
+      # Application
+      APP_ENV: development
+      APP_BASE_URL: http://localhost:8002
+      
+      # API Configuration
+      API_V1_PREFIX: /api/v1
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend/app:/app/app:ro  # For development hot reload
+    networks:
+      - kpis-network
+    restart: unless-stopped
+
+  # KPIs UI (Frontend)
+  kpis-ui:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: development
+    container_name: kpis-ui
+    ports:
+      - "3002:3002"
+    environment:
+      # Development
+      NODE_ENV: development
+      CHOKIDAR_USEPOLLING: "true"
+      WATCHPACK_POLLING: "true"
+      
+      # API Configuration
+      VITE_API_BASE_URL: http://localhost:8002
+      VITE_KPIS_SERVICE_URL: http://kpis-service:8002
+      
+      # App Configuration
+      VITE_APP_BASE_URL: http://localhost:3002
+      GENERATE_SOURCEMAP: "false"
+    depends_on:
+      - kpis-service
+    volumes:
+      - ./frontend/src:/app/src:ro  # For development hot reload
+      - ./frontend/public:/app/public:ro
+      - /app/node_modules  # Anonymous volume to prevent node_modules override
+    networks:
+      - kpis-network
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+
+volumes:
+  postgres_data:
+
+networks:
+  kpis-network:
+    driver: bridge
