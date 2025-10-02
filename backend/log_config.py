@@ -22,12 +22,12 @@ log_config: Dict[str, Any] = {
         "default": {
             "formatter": "default",
             "class": "logging.StreamHandler",
-            "stream": sys.stdout,
+            "stream": "ext://sys.stdout",
         },
         "access": {
             "formatter": "access",
             "class": "logging.StreamHandler",
-            "stream": sys.stdout,
+            "stream": "ext://sys.stdout",
         },
     },
     "loggers": {
