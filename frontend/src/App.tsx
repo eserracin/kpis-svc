@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import KpiCard from './components/KpiCard';
-import type { EquityData, DailyPnLData, PeriodPnLData, DrawdownData } from './components/KpiCard';
+import KpiCard from './components/KpiCardDashboard';
+import type { EquityData, DailyPnLData, PeriodPnLData, DrawdownData } from './components/KpiCardDashboard';
 
 // Mock data for demonstration
 const mockEquityData: EquityData = {

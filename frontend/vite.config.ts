@@ -25,7 +25,7 @@ export default defineConfig({
         },
       },
       exposes: {
-        './KpiCard': './src/components/KpiCard.tsx',
+        './KpiCardDashboard': './src/components/KpiCardDashboard.tsx',
       },
       shared: {
         react: {

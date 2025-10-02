@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { EquityData, DailyPnLData, PeriodPnLData, DrawdownData } from '../components/KpiCard';
+import type { EquityData, DailyPnLData, PeriodPnLData, DrawdownData } from '../components/KpiCardDashboard';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8002';
 
