@@ -126,7 +126,7 @@ const KpiCard = (props: KpiCardProps) => {
     className = '', 
     formatCurrency, 
     formatPercentage,
-    defaultExpanded = true  // Cambiado a false para que inicie colapsado
+    defaultExpanded = false  // Cambiado a false para que inicie colapsado
   } = props;
 
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
